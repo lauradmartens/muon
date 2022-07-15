@@ -7,6 +7,7 @@ from typing import List, Union, Optional, Callable, Iterable
 from pathlib import Path
 from datetime import datetime
 from warnings import warn
+from xmlrpc.client import Boolean
 
 import numpy as np
 import pandas as pd
@@ -752,6 +753,7 @@ def count_fragments_features(
     features: Optional[pd.DataFrame] = None,
     extend_upstream: int = 2e3,
     extend_downstream: int = 0,
+    count_dublicates: Boolean = False
 ) -> AnnData:
     """
     Count fragments overlapping given Features. Returns cells x features matrix.
@@ -823,7 +825,10 @@ def count_fragments_features(
                 try:
                     ind = d[fr.name]  # cell barcode (e.g. GTCAGTCAGTCAGTCA-1)
                     mx.rows[i].append(ind)
-                    mx.data[i].append(int(fr.score))  # number of cuts per fragment (e.g. 2)
+                    if count_dublicates == True:
+                        mx.data[i].append(int(fr.score))  # number of cuts per fragment (e.g. 2)
+                    else:
+                        mx.data[i].append(int(1))
                 except:
                     pass
 
